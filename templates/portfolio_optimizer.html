@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Optimizer</title>
+
+    <link rel="stylesheet" href="../static/css/portfolio_optimizer.css">
+</head>
+<body>
+    <h1>
+        Optimized Stock Portfolio
+    </h1>
+    <table>
+        {% for k, v in data.items()  %}
+            <tr>
+                    <th>{{k}}</th>
+                    <td>{{v}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    
+</body>
+</html>

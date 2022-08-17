@@ -6,13 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Optimizer</title>
 
-    <link rel="stylesheet" href="../static/index-style.css">
+    <link rel="stylesheet" href="../static/css/index.css">
 </head>
 <body>
     <h1>
         Portfolio Optimizer Rest API using Flask
     </h1>
-    <p>Pass ticker symbols to tickers variable in URL string e.g. :</p>
-    <a href='/api/portfolio?tickers=AAPL TSLA'>View Min Risk and Max Return Portfolios for FB and GOOGL</a>
+    <p>
+        Pass ticker symbols to tickers variable in URL string e.g.: 
+        <strong>
+            AAPL TSLA
+        </strong>
+    </p>
+    <button>
+        <a href='portfolio_optimizer?tickers=AAPL TSLA'>View Min Risk and Max Return Portfolios for AAPL and TSLA</a>
+    </button>
 </body>
 </html>
