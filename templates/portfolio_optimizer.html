@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../static/css/portfolio_optimizer.css">
 </head>
 <body>
-    <h1>
+    <h1 id="header">
         Optimized Stock Portfolio
     </h1>
     <table>
@@ -20,6 +20,21 @@
             </tr>
         {% endfor %}
     </table>
+
+    <script>
+        function change_heading() {
+        
+        let params = (new URL(document.location)).searchParams;
+        let tickers = params.get("tickers");
+        console.log(params)
+        console.log(tickers)
+
+        document.getElementById("header").innerHTML = "Optimized Stock Portfolio" + " for " + tickers;
+        }
+        
+        change_heading();
+
+    </script>
     
 </body>
 </html>

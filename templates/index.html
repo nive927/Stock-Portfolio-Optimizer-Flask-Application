@@ -18,8 +18,16 @@
             AAPL TSLA
         </strong>
     </p>
-    <button>
-        <a href='portfolio_optimizer?tickers=AAPL TSLA'>View Min Risk and Max Return Portfolios for AAPL and TSLA</a>
-    </button>
+
+    <div>
+        <form action="/portfolio_optimizer">
+            <label for="tickers">Ticker List:</label>
+            <br>
+            <input type="text" placeholder="AAPL TSLA" name="tickers" id="tickers">
+            <br><br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
 </body>
 </html>
