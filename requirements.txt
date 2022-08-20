@@ -1,6 +1,7 @@
 flask
 flask-restful
 flask-cors
+PyMySQL
 pandas
 numpy
 yfinance

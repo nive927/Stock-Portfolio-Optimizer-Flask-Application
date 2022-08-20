@@ -1,8 +1,12 @@
 from distutils.log import debug
+from turtle import pos
 from flask import Flask, request, render_template
 from flask_restful import Resource, Api
 from flask_cors import CORS
 import optimizer
+
+import sqlite3
+import pymysql
 
 def create_app():
 	app = Flask(__name__)
@@ -12,8 +16,31 @@ app = create_app()
 api = Api(app)
 CORS(app)
 
+
 @app.route("/")
 def index():
+    conn = sqlite3.connect('./datadb/database.db')
+    conn.row_factory = sqlite3.Row
+    with open("./datadb/schema.sql") as f:
+        conn.executescript(f.read())
+    cur = conn.cursor()
+
+    cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
+            ('First Post', 'Content for the first post')
+            )
+
+    cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
+                ('Second Post', 'Content for the second post')
+                )
+
+    posts = conn.execute('SELECT * FROM posts')
+    
+    for post in posts:
+        print(tuple(post))
+
+    conn.commit()
+    conn.close()
+
     return render_template("index.html")
 
 @app.route("/portfolio_optimizer")
