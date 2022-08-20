@@ -1,13 +1,21 @@
 {% extends "layout.html" %}
 {% block body %}
-    <p>
-        Pass ticker symbols to tickers variable in URL string e.g.: 
-        <strong>
-            AAPL TSLA
-        </strong>
-    </p>
 
-    <div>
+    <div class="row">
+        <h3>
+            Portfolio Optimizer
+        </h3>
+    </div>
+    <div class="row">
+        <p>
+            Pass ticker symbols to tickers variable in URL string e.g.: 
+            <strong>
+                AAPL TSLA
+            </strong>
+        </p>
+    </div>
+
+    <div class="row">
         <form action="/portfolio_optimizer">
             <label for="tickers">Ticker List:</label>
             <br>
@@ -16,6 +24,8 @@
             <input type="submit" value="Submit">
         </form>
     </div>
+    
+    <br>
 
     <div class="row">
         <h3>
@@ -24,8 +34,32 @@
     </div>
     <div class="row">
         <div class="col-md-4">
+            <!-- {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade slow" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %} -->
             <div class="card card-body">
-                form
+                <form action="{{ url_for ('add_portfolio') }}">
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" class="form-control" name="title" placeholder="Portfolio Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="assets">Assets</label>
+                        <input type="text" class="form-control" name="assets" placeholder="AAPL F ETH-USD">
+                    </div>
+                    <button class="btn btn-primary btn-block">
+                        Add
+                    </button>
+                </form>
             </div>
         </div>
         <div class="col-md-8">
@@ -37,12 +71,32 @@
                 <thead>
                     <tr>
                         <td>ID</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>Timestamp</td>
+                        <td>Title</td>
+                        <td>Assets</td>
+                        <td>Type</td>
+                        <td>Action</td>
                     </tr>
                 </thead>
+                {% for portfolio in portfolios %}
+                <tr>
+                    <td>{{ portfolio.id }}</td>
+                    <td>{{ portfolio.created }}</td>
+                    <td>{{ portfolio.title }}</td>
+                    <td>{{ portfolio.assets }}</td>
+                    <td>{{ portfolio.portfolio_type }}</td>
+                    <td width="130">
+                        <a href="/edit/{{ portfolio.id }}"
+                        class="btn btn-secondary btn-sm">
+                            Edit
+                        </a>
+                        <a href="/delete/{{ portfolio.id }}"
+                        class="btn btn-danger btn-delete btn-sm">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
             </table>
         </div>
     </div>

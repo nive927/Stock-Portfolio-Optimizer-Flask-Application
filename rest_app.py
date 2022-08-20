@@ -1,6 +1,7 @@
 from distutils.log import debug
+from sys import flags
 from turtle import pos
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, url_for, redirect, flash, get_flashed_messages
 from flask_restful import Resource, Api
 from flask_cors import CORS
 import optimizer
@@ -25,6 +26,12 @@ TICKERS = {"Bonds": ["^FVX", "^IRX", "^TNX", "^TYX"],
 BONDS = TICKERS["Bonds"] + TICKERS["Commodities"]
 STOCKS = TICKERS["Cryptos"] + TICKERS["Indices"] + TICKERS["Stocks"]
 
+conn = sqlite3.connect('./datadb/database.db')
+conn.row_factory = sqlite3.Row
+with open("./datadb/schema.sql") as f:
+    conn.executescript(f.read())
+conn.close()
+
 def set_portfolio_type(tickers: list):
 
     percentage_bonds = (len(list(filter(lambda ele: ele in BONDS, tickers))) / len(tickers)) * 100
@@ -42,7 +49,7 @@ def set_portfolio_type(tickers: list):
     else:
         portfolio_type = "NA"
 
-    print(f"\n\n{tickers}: portfolio_type\n\n")
+    print(f"\n\n{tickers}: {portfolio_type}\n\n")
 
     return portfolio_type
 
@@ -50,23 +57,37 @@ def set_portfolio_type(tickers: list):
 def index():
     conn = sqlite3.connect('./datadb/database.db')
     conn.row_factory = sqlite3.Row
-    with open("./datadb/schema.sql") as f:
-        conn.executescript(f.read())
     cur = conn.cursor()
 
-    # cur.execute("INSERT INTO portfolios (title, assets, portfolio_type) VALUES (?, ?, ?)",
-    #         ("US Companies", "GOOGL META AAPL", set_portfolio_type("GOOGL META AAPL".split()))
-    #         )
-
-    portfolios = conn.execute('SELECT * FROM portfolios')
+    data = cur.execute('SELECT * FROM portfolios')
     
-    for portfolio in portfolios:
+    portfolios = list()
+
+    for portfolio in data:
         print(dict(portfolio))
+        portfolios.append(dict(portfolio))
 
     conn.commit()
-    conn.close()
 
-    return render_template("index.html")
+    return render_template("index.html", portfolios=portfolios)
+
+@app.route("/add_portfolio")
+def add_portfolio():
+    conn = sqlite3.connect('./datadb/database.db')
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    
+    title = request.args.get("title")
+    assets = request.args.get("assets")
+    portfolio_type = set_portfolio_type(assets.split())
+
+    cur.execute("INSERT INTO portfolios (title, assets, portfolio_type) VALUES (?, ?, ?)",
+            (title, assets, portfolio_type))
+    conn.commit()
+
+    flash("Portfolio added successfully!")
+    return redirect(url_for("index"))
+
 
 @app.route("/portfolio_optimizer")
 def portfolio_optimizer():
@@ -85,4 +106,5 @@ def portfolio_optimizer():
 
 if __name__ == '__main__':
     # app.run(host="0.0.0.0", port=8090)
+    app.secret_key = 'nive'
     app.run(host="0.0.0.0", port=8090, debug=True)
