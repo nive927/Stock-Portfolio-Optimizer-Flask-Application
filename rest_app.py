@@ -29,6 +29,8 @@ def set_portfolio_type(tickers: list):
 
     percentage_bonds = (len(list(filter(lambda ele: ele in BONDS, tickers))) / len(tickers)) * 100
     
+    portfolio_type = "NA"
+
     if 60 <= percentage_bonds <= 100:
         portfolio_type = "Conservative"
     elif 35 <= percentage_bonds < 60:
@@ -40,7 +42,9 @@ def set_portfolio_type(tickers: list):
     else:
         portfolio_type = "NA"
 
-    print(portfolio_type)
+    print(f"\n\n{tickers}: portfolio_type\n\n")
+
+    return portfolio_type
 
 @app.route("/")
 def index():
@@ -50,18 +54,14 @@ def index():
         conn.executescript(f.read())
     cur = conn.cursor()
 
-    cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
-            ('First Post', 'Content for the first post')
-            )
+    # cur.execute("INSERT INTO portfolios (title, assets, portfolio_type) VALUES (?, ?, ?)",
+    #         ("US Companies", "GOOGL META AAPL", set_portfolio_type("GOOGL META AAPL".split()))
+    #         )
 
-    cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
-                ('Second Post', 'Content for the second post')
-                )
-
-    posts = conn.execute('SELECT * FROM posts')
+    portfolios = conn.execute('SELECT * FROM portfolios')
     
-    for post in posts:
-        print(tuple(post))
+    for portfolio in portfolios:
+        print(dict(portfolio))
 
     conn.commit()
     conn.close()
