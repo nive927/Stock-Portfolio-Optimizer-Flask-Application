@@ -1,40 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio Optimizer</title>
+{% extends "layout.html" %}
+{% block body %}
+<table>
+    {% for k, v in data.items()  %}
+        <tr>
+                <th>{{k}}</th>
+                <td>{{v}}</td>
+        </tr>
+    {% endfor %}
+</table>
 
-    <link rel="stylesheet" href="../static/css/portfolio_optimizer.css">
-</head>
-<body>
-    <h1 id="header">
-        Optimized Stock Portfolio
-    </h1>
-    <table>
-        {% for k, v in data.items()  %}
-            <tr>
-                    <th>{{k}}</th>
-                    <td>{{v}}</td>
-            </tr>
-        {% endfor %}
-    </table>
-
-    <script>
-        function change_heading() {
-        
-        let params = (new URL(document.location)).searchParams;
-        let tickers = params.get("tickers");
-        console.log(params)
-        console.log(tickers)
-
-        document.getElementById("header").innerHTML = "Optimized Stock Portfolio" + " for " + tickers;
-        }
-        
-        change_heading();
-
-    </script>
+<script>
+    function change_heading() {
     
-</body>
-</html>
+    let params = (new URL(document.location)).searchParams;
+    let tickers = params.get("tickers");
+    console.log(params)
+    console.log(tickers)
+
+    document.getElementById("header").innerHTML = "Optimized Stock Portfolio" + " for " + tickers;
+    }
+    
+    change_heading();
+
+</script>
+{% endblock %}

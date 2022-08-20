@@ -12,23 +12,6 @@ app = create_app()
 api = Api(app)
 CORS(app)
 
-# class portfolio_optimizer(Resource):
-#     def get(self):
-#         #ticker_list = "AAPL TSLA"
-#         data = dict()
-#         if request.args.get("tickers") and len(request.args.get("tickers").split()) >= 2:
-#             ticker_list = request.args.get("tickers")
-#             app.logger.info(ticker_list.split())
-#             minRisk, maxReturn = optimizer.optimize(ticker_list)
-#             data["minRisk"] = minRisk
-#             data["maxReturn"] = maxReturn
-#         else:
-#             data["Error"] = "No portfolio provided"
-#         app.logger.info(data)
-#         return render_template("portfolio_optimizer.html", data=data)
-
-# api.add_resource(portfolio_optimizer, "/portfolio_optimizer")
-
 @app.route("/")
 def index():
     return render_template("index.html")
