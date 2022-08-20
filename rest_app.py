@@ -16,6 +16,31 @@ app = create_app()
 api = Api(app)
 CORS(app)
 
+TICKERS = {"Bonds": ["^FVX", "^IRX", "^TNX", "^TYX"],
+"Commodities": ["CL=F", "GC=F", "KC=F"],
+"Cryptos": ["BNB-USD", "BTC-USD", "ETH-USD", "USDC-USD", "USDT-USD"],
+"Indices": ["^GDAXI", "^GSPC", "^N225", "^RUT"],
+"Stocks": ["AAPL", "AMZN", "F", "GOOGL", "META", "NFLX", "TSLA"]}
+
+BONDS = TICKERS["Bonds"] + TICKERS["Commodities"]
+STOCKS = TICKERS["Cryptos"] + TICKERS["Indices"] + TICKERS["Stocks"]
+
+def set_portfolio_type(tickers: list):
+
+    percentage_bonds = (len(list(filter(lambda ele: ele in BONDS, tickers))) / len(tickers)) * 100
+    
+    if 60 <= percentage_bonds <= 100:
+        portfolio_type = "Conservative"
+    elif 35 <= percentage_bonds < 60:
+        portfolio_type = "Balanced"
+    elif 5 <= percentage_bonds < 35:
+        portfolio_type = "Growth"
+    elif 0 <= percentage_bonds <= 5:
+        portfolio_type = "Aggressive"
+    else:
+        portfolio_type = "NA"
+
+    print(portfolio_type)
 
 @app.route("/")
 def index():
