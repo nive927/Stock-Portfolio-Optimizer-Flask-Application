@@ -1,7 +1,12 @@
 import pandas as pd
 import numpy as np
 import yfinance as yf
-
+import matplotlib.pyplot as plt
+from pandas.plotting import register_matplotlib_converters
+register_matplotlib_converters()
+import json
+import plotly
+import plotly.express as px
 
 def download_prices(tickers):
     df = yf.download(tickers.split(), '2020-1-1')['Adj Close']
@@ -48,6 +53,29 @@ def calculate_eff_frontier(df, annual_ret, cov_annual):
     # make a nice dataframe of the extended dictionary
     df_portfolio = pd.DataFrame(portfolio)   
     return df_portfolio
+
+def plot_efficient_frontier(tickers):
+    df = download_prices(tickers)
+    annual_ret, cov_annual = calculate_variables(df)
+    df_portfolio = calculate_eff_frontier(df, annual_ret, cov_annual)
+    # find min Volatility & max sharpe values in the dataframe 
+    is_min_vol = df_portfolio['Volatility'] ==  df_portfolio['Volatility'].min()
+    is_max_sharpe = df_portfolio['Sharpe Ratio'] == df_portfolio['Sharpe Ratio'].max()
+    # use the min, max values to locate and create the two special portfolios
+    max_sharpe_port = df_portfolio.loc[is_max_sharpe]
+    min_vol_port = df_portfolio.loc[is_min_vol]
+
+    # plot frontier, max sharpe & min Volatility values with a scatterplot
+    plt.style.use('seaborn-dark')
+    df_portfolio.plot.scatter(x='Volatility', y='Returns', c='Sharpe Ratio',
+                            cmap='RdYlGn', edgecolors='black', figsize=(10, 8), grid=True)
+    plt.scatter(x=max_sharpe_port['Volatility'], y=max_sharpe_port['Returns'], c='red', marker='D', s=200)
+    plt.scatter(x=min_vol_port['Volatility'], y=min_vol_port['Returns'], c='blue', marker='D', s=200 )
+    plt.xlabel('Volatility (Std. Deviation)')
+    plt.ylabel('Expected Returns')
+    plt.title('Efficient Frontier')
+    # plt.savefig("./static/figures/efficient_frontier.png")
+
 
 def optimize(tickers):
     df = download_prices(tickers)
