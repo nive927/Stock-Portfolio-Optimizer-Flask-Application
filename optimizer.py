@@ -57,6 +57,6 @@ def optimize(tickers):
     is_min_vol = df_portfolio['Volatility'] ==  df_portfolio['Volatility'].min()
     is_max_sharpe = df_portfolio['Sharpe Ratio'] == df_portfolio['Sharpe Ratio'].max()
     # use the min, max values to locate and create the two special portfolios
-    max_sharpe_port = df_portfolio.loc[is_max_sharpe].to_json()
-    min_vol_port = df_portfolio.loc[is_min_vol].to_json()
+    max_sharpe_port = df_portfolio.loc[is_max_sharpe].to_dict()
+    min_vol_port = df_portfolio.loc[is_min_vol].to_dict()
     return min_vol_port, max_sharpe_port

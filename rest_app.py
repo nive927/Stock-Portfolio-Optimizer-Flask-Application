@@ -5,6 +5,7 @@ from flask import Flask, request, render_template, url_for, redirect, flash, get
 from flask_restful import Resource, Api
 from flask_cors import CORS
 import optimizer
+import pandas as pd
 
 import sqlite3
 import pymysql
@@ -81,8 +82,10 @@ def add_portfolio():
     assets = request.args.get("assets")
     portfolio_type = set_portfolio_type(assets.split())
 
+    print(f"Insert: {title} {assets} {portfolio_type}")
+
     cur.execute("INSERT INTO portfolios (title, assets, portfolio_type) VALUES (?, ?, ?)",
-            (title, assets, portfolio_type))
+            (str(title), str(assets), str(portfolio_type)))
     conn.commit()
 
     flash("Portfolio added successfully!")
@@ -126,19 +129,27 @@ def delete_portfolio(id):
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
 
-    cur.execute('DELETE FROM portfolios WHERE id = {0}'.format(id))
+    cur.execute('DELETE FROM portfolios WHERE id= {0}'.format(id))
     conn.commit()
     cur.close()
 
     flash("Portfolio deleted successfully!")
     return redirect(url_for("index"))
 
-
 @app.route("/portfolio_optimizer")
-def portfolio_optimizer():
+@app.route("/portfolio_optimizer/<string:assets>")
+def portfolio_optimizer(assets=None):
+
     #ticker_list = "AAPL TSLA"
     data = dict()
-    if request.args.get("tickers") and len(request.args.get("tickers").split()) >= 2:
+    if assets:
+        print(assets)
+        print(f"assets: {assets} {type(assets)}")
+        app.logger.info(assets.split())
+        minRisk, maxReturn = optimizer.optimize(assets)
+        data["minRisk"] = minRisk
+        data["maxReturn"] = maxReturn
+    elif request.args.get("tickers") and len(request.args.get("tickers").split()) >= 2:
         ticker_list = request.args.get("tickers")
         app.logger.info(ticker_list.split())
         minRisk, maxReturn = optimizer.optimize(ticker_list)
@@ -147,7 +158,22 @@ def portfolio_optimizer():
     else:
         data["Error"] = "No portfolio provided"
     app.logger.info(data)
-    return render_template("portfolio_optimizer.html", data=data)
+
+    new_data = list()
+    minRisk_data = list()
+    maxReturn_data = list()
+
+    for k, v in data["minRisk"].items():
+        for key, val in v.items():
+            minRisk_data.append(tuple([k, val]))
+
+    for k, v in data["maxReturn"].items():
+        for key, val in v.items():
+            maxReturn_data.append(tuple([k, val]))
+        
+    new_data = [minRisk_data, maxReturn_data]
+
+    return render_template("portfolio_optimizer.html", data=new_data)
 
 if __name__ == '__main__':
     # app.run(host="0.0.0.0", port=8090)

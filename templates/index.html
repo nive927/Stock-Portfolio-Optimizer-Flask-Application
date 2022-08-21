@@ -87,13 +87,15 @@
                     <td>{{ portfolio.portfolio_type }}</td>
                     <td width="130">
                         <a href="/edit_portfolio/{{ portfolio.id }}"
-                        class="btn btn-secondary btn-sm">
+                        class="btn btn-secondary btn-sm btn-block">
                             Edit
                         </a>
                         <a href="/delete_portfolio/{{ portfolio.id }}"
-                        class="btn btn-danger btn-delete btn-sm">
+                        class="btn btn-danger btn-delete btn-sm btn-block">
                             Delete
                         </a>
+                        <a href="/portfolio_optimizer/{{ portfolio.assets }}"
+                        class="btn btn-success btn-sm btn-block">Optimize</a>
                     </td>
                 </tr>
                 {% endfor %}
