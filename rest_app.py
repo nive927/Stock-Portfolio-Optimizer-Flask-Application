@@ -88,6 +88,51 @@ def add_portfolio():
     flash("Portfolio added successfully!")
     return redirect(url_for("index"))
 
+@app.route("/edit_portfolio/<id>")
+def edit_portfolio(id):
+    conn = sqlite3.connect('./datadb/database.db')
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+
+    cur.execute(f"SELECT * FROM portfolios WHERE id={id}")
+    data = cur.fetchall()
+    cur.close()
+    print(f"Edit Record {id}: {dict(data[0])}")
+
+    return render_template("edit.html", portfolio=dict(data[0]))
+
+@app.route("/update_portfolio/<id>")
+def update_portfolio(id):
+    title = request.args.get("title")
+    assets = request.args.get("assets")
+    portfolio_type = set_portfolio_type(assets.split())
+
+    conn = sqlite3.connect('./datadb/database.db')
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+
+    print(f"Update: {title} {assets} {portfolio_type}")
+
+    cur.execute("UPDATE portfolios SET title=?, assets=?, portfolio_type=? WHERE id=?", (str(title), str(assets), str(portfolio_type), int(id)))
+    flash("Portfolio update successfully!")
+    
+    conn.commit()
+    cur.close()
+    return redirect(url_for('index'))
+
+@app.route("/delete_portfolio/<string:id>")
+def delete_portfolio(id):
+    conn = sqlite3.connect('./datadb/database.db')
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+
+    cur.execute('DELETE FROM portfolios WHERE id = {0}'.format(id))
+    conn.commit()
+    cur.close()
+
+    flash("Portfolio deleted successfully!")
+    return redirect(url_for("index"))
+
 
 @app.route("/portfolio_optimizer")
 def portfolio_optimizer():
