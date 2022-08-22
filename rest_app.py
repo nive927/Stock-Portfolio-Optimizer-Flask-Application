@@ -5,7 +5,6 @@ from flask_restful import Resource, Api
 from flask_cors import CORS
 import optimizer
 import pandas as pd
-
 import sqlite3
 import pymysql
 
