@@ -1,6 +1,5 @@
 from distutils.log import debug
 from sys import flags
-from turtle import pos
 from flask import Flask, request, render_template, url_for, redirect, flash, get_flashed_messages
 from flask_restful import Resource, Api
 from flask_cors import CORS
